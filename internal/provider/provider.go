@@ -16,20 +16,24 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HAPROXY_SERVER", nil),
+				Description: "HAProxy Dataplaneapi server address.",
 			},
 			"username": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HAPROXY_USERNAME", nil),
+				Description: "Username use for authentification",
 			},
 			"password": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HAPROXY_PASSWORD", nil),
+				Description: "Password use for authentification",
 			},
 			"insecure": {
-				Type:     schema.TypeBool,
-				Required: true,
+				Type:        schema.TypeBool,
+				Required:    true,
+				Description: "Scheme for request. If not set, https will be use.",
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
