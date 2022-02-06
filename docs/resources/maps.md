@@ -3,6 +3,7 @@
 page_title: "haproxy_maps Resource - terraform-provider-haproxy"
 subcategory: ""
 description: |-
+    Manage runtime map files.
   
 ---
 
@@ -17,13 +18,13 @@ description: |-
 
 ### Required
 
-- **key** (String)
-- **map** (String)
+- **key** (String) Key name
+- **map** (String) The HAProxy map name. More informations : https://www.haproxy.com/fr/blog/introduction-to-haproxy-maps/
 
 ### Optional
 
-- **force_sync** (Boolean)
+- **force_sync** (Boolean) If true, immediately syncs changes to disk
 - **id** (String) The ID of this resource.
-- **value** (String)
+- **value** (String) Value name. Default value 'defaultValue'
 
 
