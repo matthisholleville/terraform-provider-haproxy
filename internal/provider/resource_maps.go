@@ -17,24 +17,28 @@ func resourceMaps() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"map": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "The HAProxy map name. More informations : https://www.haproxy.com/fr/blog/introduction-to-haproxy-maps/",
 			},
 			"key": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Key name",
 			},
 			"value": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "defaultValue",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "defaultValue",
+				Description: "Value name. Default value 'defaultValue'",
 			},
 			"force_sync": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "If true, immediately syncs changes to disk",
 			},
 		},
 	}
