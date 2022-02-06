@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -44,9 +43,6 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	log := log.Default()
-
-	log.Println(d.Get("server_addr").(string))
 	server_addr := d.Get("server_addr").(string)
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
