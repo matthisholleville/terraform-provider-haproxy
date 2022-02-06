@@ -42,6 +42,8 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 
 	defer res.Body.Close()
 
+	fmt.Println(res.StatusCode)
+
 	// Try to unmarshall into errorResponse
 	if res.StatusCode >= 300 {
 		var errRes errorResponse
@@ -56,12 +58,10 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 		return nil
 	}
 
-	// bodyBytes, err := io.ReadAll(res.Body)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// bodyString := string(bodyBytes)
-	// fmt.Println("bodystring", bodyString)
+	if v == nil {
+		return nil
+	}
+
 	if err = json.NewDecoder(res.Body).Decode(&v); err != nil {
 		return err
 	}

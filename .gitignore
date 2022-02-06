@@ -1,3 +1,4 @@
 terraform-provider-haproxy
 .vscode
 .idea
+.DS_Store
