@@ -27,6 +27,10 @@ func Provider() *schema.Provider {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HAPROXY_PASSWORD", nil),
 			},
+			"insecure": {
+				Type:     schema.TypeBool,
+				Required: true,
+			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"haproxy_maps": resourceMaps(),
@@ -42,8 +46,9 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	server_addr := d.Get("server_addr").(string)
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
+	insecure := d.Get("insecure").(bool)
 
-	apiClient := haproxy.NewClient(username, password, server_addr)
+	apiClient := haproxy.NewClient(username, password, server_addr, insecure)
 
 	err := apiClient.TestApiCall()
 	if err != nil {

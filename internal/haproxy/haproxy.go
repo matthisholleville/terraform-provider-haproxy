@@ -15,14 +15,18 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-func NewClient(username string, password string, server_url string) *Client {
+func NewClient(username string, password string, server_url string, insecure bool) *Client {
+	scheme := "https"
+	if insecure {
+		scheme = "http"
+	}
 	return &Client{
 		username: username,
 		password: password,
 		HTTPClient: &http.Client{
 			Timeout: 5 * time.Minute,
 		},
-		base_url: "http://" + server_url + ":5555/v2",
+		base_url: scheme + "://" + server_url + "/v2",
 	}
 }
 
