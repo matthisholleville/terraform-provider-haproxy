@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     haproxy = {
-      version = "~> 1.0.0"
       source  = "matthisholleville/haproxy"
+      version = "0.1.0"
     }
   }
 }
