@@ -7,9 +7,10 @@ terraform {
   }
 }
 provider "haproxy" {
-  server_addr = "CHANGE_ME"
+  server_addr = "10.100.0.130:5555"
   username    = "CHANGE_ME"
   password    = "CHANGE_ME"
+  insecure    = true
 }
 
 resource "haproxy_maps" "test" {
