@@ -12,17 +12,8 @@ provider "haproxy" {
   password    = "CHANGE_ME"
 }
 
-locals {
-  ips = ["92.91.233.55", "92.91.233.53"]
+resource "haproxy_maps" "test" {
+  map   = "ratelimit"
+  key   = "/metrics"
+  value = "50"
 }
-
-# resource "haproxy_maps" "test" {
-#   for_each = { for ip in local.ips : ip => ip }
-#   map      = "blacklist"
-#   key      = each.key
-# }
-
-# resource "haproxy_maps" "test2" {
-#   map = "blacklist"
-#   key = "92.91.233.55"
-# }
