@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy"
+	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy/models"
 )
 
 func resourceMaps() *schema.Resource {
@@ -47,7 +48,7 @@ func resourceMaps() *schema.Resource {
 func resourceMapsCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
 	mapName := d.Get("map").(string)
-	newEntrie := &haproxy.MapEntrie{
+	newEntrie := &models.MapEntrie{
 		Key:   d.Get("key").(string),
 		Value: d.Get("value").(string),
 	}
