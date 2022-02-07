@@ -1,20 +1,19 @@
 package haproxy
 
-import "net/http"
+import (
+	"net/http"
 
-type Configuration struct {
-	Version int    `json:"_version"`
-	Data    string `json:"data"`
-}
+	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy/models"
+)
 
-func (c *Client) GetConfiguration(transactionId string) (*Configuration, error) {
+func (c *Client) GetConfiguration(transactionId string) (*models.Configuration, error) {
 	url := c.base_url + "/services/haproxy/configuration/raw?transaction_id" + transactionId
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res := Configuration{}
+	res := models.Configuration{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}

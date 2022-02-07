@@ -3,22 +3,18 @@ package haproxy
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy/models"
 )
 
-type Transaction struct {
-	Version int    `json:"_version"`
-	Id      string `json:"id"`
-	Status  string `json:"status"`
-}
-
-func (c *Client) CreateTransaction(version int) (*Transaction, error) {
+func (c *Client) CreateTransaction(version int) (*models.Transaction, error) {
 	url := c.base_url + "/services/haproxy/transaction?version=" + strconv.Itoa(version)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res := Transaction{}
+	res := models.Transaction{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}
@@ -26,14 +22,14 @@ func (c *Client) CreateTransaction(version int) (*Transaction, error) {
 	return &res, nil
 }
 
-func (c *Client) CommitTransaction(transactionId string) (*Transaction, error) {
+func (c *Client) CommitTransaction(transactionId string) (*models.Transaction, error) {
 	url := c.base_url + "/services/haproxy/transaction/" + transactionId
 	req, err := http.NewRequest("PUT", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res := Transaction{}
+	res := models.Transaction{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}
