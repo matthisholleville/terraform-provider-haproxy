@@ -53,3 +53,17 @@ func preCheck(t *testing.T) {
 		}
 	}
 }
+
+func importStep(name string, ignore ...string) resource.TestStep {
+	step := resource.TestStep{
+		ResourceName:      name,
+		ImportState:       true,
+		ImportStateVerify: true,
+	}
+
+	if len(ignore) > 0 {
+		step.ImportStateVerifyIgnore = ignore
+	}
+
+	return step
+}

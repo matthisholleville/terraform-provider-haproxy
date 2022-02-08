@@ -15,6 +15,9 @@ func resourceFrontend() *schema.Resource {
 		ReadContext:   resourceFrontendRead,
 		UpdateContext: resourceFrontendUpdate,
 		DeleteContext: resourceFrontendDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"bind_process": {
 				Type:        schema.TypeString,
@@ -244,12 +247,53 @@ func resourceFrontend() *schema.Resource {
 }
 
 func resourceFrontendRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	client := meta.(*haproxy.Client)
+
+	frontend := models.Frontend{
+		Name: d.Id(),
+	}
+
+	result, err := client.GetFrontend(frontend)
+	if err != nil {
+		return diag.FromErr(err)
+
+	}
+
+	d.Set("name", result.Name)
+	d.Set("bind_process", result.BindProcess)
+	d.Set("clflog", result.Clflog)
+	d.Set("client_timeout", result.ClientTimeout)
+	d.Set("clitcpka", result.Clitcpka)
+	d.Set("contstats", result.Contstats)
+	d.Set("default_backend", result.DefaultBackend)
+	d.Set("dontlognull", result.Dontlognull)
+	d.Set("forwardfor", result.Forwardfor)
+	d.Set("http_buffer_request", result.HttpBufferRequest)
+	d.Set("http_use_htx", result.HttpUseHtx)
+	d.Set("http_connection_mode", result.HttpConnectionMode)
+	d.Set("http_keep_alive_timeout", result.HttpKeepAliveTimeout)
+	d.Set("http_request_timeout", result.HttpRequestTimeout)
+	d.Set("httplog", result.HttpLog)
+	d.Set("log_format", result.LogFormat)
+	d.Set("log_format_sd", result.LogFormatSd)
+	d.Set("log_separate_errors", result.LogSeparateErrors)
+	d.Set("log_tag", result.LogTag)
+	d.Set("logasap", result.Logasap)
+	d.Set("maxconn", result.MaxConn)
+	d.Set("mode", result.Mode)
+	d.Set("monitor_fail", result.MonitorFail)
+	d.Set("monitor_uri", result.MonitorUri)
+
 	return nil
 }
 
 func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(1)
+	configuration, err := client.GetConfiguration()
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	transaction, err := client.CreateTransaction(configuration.Version)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -269,7 +313,11 @@ func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(1)
+	configuration, err := client.GetConfiguration()
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	transaction, err := client.CreateTransaction(configuration.Version)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -288,7 +336,11 @@ func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(1)
+	configuration, err := client.GetConfiguration()
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	transaction, err := client.CreateTransaction(configuration.Version)
 	if err != nil {
 		return diag.FromErr(err)
 	}

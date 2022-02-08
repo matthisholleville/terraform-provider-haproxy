@@ -8,19 +8,19 @@ import (
 	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy/models"
 )
 
-func (c *Client) GetFrontend(transactionId string, frontend models.Frontend) (*models.Frontend, error) {
-	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "?transaction_id=" + transactionId
+func (c *Client) GetFrontend(frontend models.Frontend) (*models.Frontend, error) {
+	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	res := models.Frontend{}
+	res := models.GetFrontend{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}
 
-	return &res, nil
+	return &res.Data, nil
 }
 
 func (c *Client) CreateFrontend(transactionId string, frontend models.Frontend) (*models.Frontend, error) {

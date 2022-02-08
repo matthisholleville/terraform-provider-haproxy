@@ -1,5 +1,10 @@
 package models
 
+type GetFrontend struct {
+	Version int      `json:"_version"`
+	Data    Frontend `json:"data"`
+}
+
 type Frontend struct {
 	BindProcess          string        `json:"bind_process,omitempty"`
 	Clflog               bool          `json:"clflog,omitempty"`
