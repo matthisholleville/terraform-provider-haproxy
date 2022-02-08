@@ -12,13 +12,3 @@ provider "haproxy" {
   password    = "adminpwd"
   insecure    = true
 }
-
-# resource "haproxy_maps" "test" {
-#   map   = "ratelimit"
-#   key   = "/metrics"
-#   value = "50"
-# }
-
-resource "haproxy_frontend" "test" {
-  name = "%[1]s"
-}
