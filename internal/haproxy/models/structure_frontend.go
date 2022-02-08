@@ -5,7 +5,7 @@ type Frontend struct {
 	Clflog               bool         `json:"clflog,omitempty"`
 	ClientTimeout        int          `json:"client_timeout,omitempty"`
 	Clitcpka             string       `json:"clitcpka,omitempty"`
-	Constants            string       `json:"constants,omitempty"`
+	Contstats            string       `json:"contstats,omitempty"`
 	DefaultBackend       string       `json:"default_backend,omitempty"`
 	Dontlognull          string       `json:"dontlognull,omitempty"`
 	Forwardfor           Forwardfor   `json:"forwardfor,omitempty"`
