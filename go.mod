@@ -2,7 +2,10 @@ module github.com/matthisholleville/terraform-provider-haproxy
 
 go 1.17
 
-require github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
+require (
+	github.com/avast/retry-go v3.0.0+incompatible
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
+)
 
 require (
 	github.com/agext/levenshtein v1.2.2 // indirect
