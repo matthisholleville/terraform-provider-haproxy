@@ -3,3 +3,6 @@ terraform-provider-haproxy
 .idea
 .DS_Store
 build.sh
+tools/*
+!tools/haproxy.cfg
+!tools/dataplaneapi.hcl
