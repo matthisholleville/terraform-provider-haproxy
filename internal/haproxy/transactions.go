@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) CreateTransaction(version int) (*models.Transaction, error) {
-	url := c.base_url + "/services/haproxy/transaction?version=" + strconv.Itoa(version)
+	url := c.base_url + "/services/haproxy/transactions?version=" + strconv.Itoa(version)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (c *Client) CreateTransaction(version int) (*models.Transaction, error) {
 }
 
 func (c *Client) CommitTransaction(transactionId string) (*models.Transaction, error) {
-	url := c.base_url + "/services/haproxy/transaction/" + transactionId
+	url := c.base_url + "/services/haproxy/transactions/" + transactionId
 	req, err := http.NewRequest("PUT", url, nil)
 	if err != nil {
 		return nil, err

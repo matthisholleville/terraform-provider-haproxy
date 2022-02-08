@@ -7,14 +7,18 @@ terraform {
   }
 }
 provider "haproxy" {
-  server_addr = "10.100.0.130:5555"
-  username    = "CHANGE_ME"
-  password    = "CHANGE_ME"
+  server_addr = "localhost:5555"
+  username    = "admin"
+  password    = "adminpwd"
   insecure    = true
 }
 
-resource "haproxy_maps" "test" {
-  map   = "ratelimit"
-  key   = "/metrics"
-  value = "50"
+# resource "haproxy_maps" "test" {
+#   map   = "ratelimit"
+#   key   = "/metrics"
+#   value = "50"
+# }
+
+resource "haproxy_frontend" "test" {
+  name = "%[1]s"
 }

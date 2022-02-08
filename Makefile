@@ -7,5 +7,14 @@ test:
 
 	@docker exec tf_haproxy_acc_test mkdir -p /usr/local/etc/haproxy/maps/test.map
 
-	sleep 10
+	sleep 5
+
+	TF_ACC=1 \
+	HAPROXY_SERVER="localhost:5555" \
+	HAPROXY_USERNAME="admin" \
+	HAPROXY_PASSWORD="adminpwd" \
+	HAPROXY_INSECURE="true" \
+	go test -v -cover -count 1 ./internal/provider
+
+	@docker rm tf_haproxy_acc_test -f
 

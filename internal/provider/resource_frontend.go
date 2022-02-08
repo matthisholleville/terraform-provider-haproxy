@@ -12,6 +12,7 @@ import (
 func resourceFrontend() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceFrontendCreate,
+		ReadContext:   resourceFrontendRead,
 		UpdateContext: resourceFrontendUpdate,
 		DeleteContext: resourceFrontendDelete,
 		Schema: map[string]*schema.Schema{
@@ -242,9 +243,13 @@ func resourceFrontend() *schema.Resource {
 	}
 }
 
+func resourceFrontendRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return nil
+}
+
 func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(0)
+	transaction, err := client.CreateTransaction(1)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -260,7 +265,7 @@ func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(0)
+	transaction, err := client.CreateTransaction(1)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -275,7 +280,7 @@ func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	transaction, err := client.CreateTransaction(0)
+	transaction, err := client.CreateTransaction(1)
 	if err != nil {
 		return diag.FromErr(err)
 	}
