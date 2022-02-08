@@ -22,6 +22,12 @@ $ git clone git@github.com:matthisholleville/terraform-provider-haproxy.git
 $ go build -o terraform-provider-haproxy
 ```
 
+## Testing The Provider
+
+```sh
+$ make test
+```
+
 ## Example usage
 
 ```hcl

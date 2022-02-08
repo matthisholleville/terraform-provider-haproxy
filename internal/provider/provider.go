@@ -33,10 +33,12 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeBool,
 				Required:    true,
 				Description: "Scheme for request. If not set, https will be use.",
+				DefaultFunc: schema.EnvDefaultFunc("HAPROXY_INSECURE", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"haproxy_maps": resourceMaps(),
+			"haproxy_maps":     resourceMaps(),
+			"haproxy_frontend": resourceFrontend(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
