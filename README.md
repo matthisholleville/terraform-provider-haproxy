@@ -61,11 +61,11 @@ resource "haproxy_maps" "test" {
 ### Ressources implemented
 
 - [x] maps
+- [x] frontend
 
 ### Ressources in the roadmap
 
 - [ ] backend
-- [ ] frontend
 - [ ] server
 - [ ] acl
 - [ ] httpRequestRule
