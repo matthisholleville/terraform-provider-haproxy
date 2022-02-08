@@ -6,8 +6,8 @@ import (
 	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy/models"
 )
 
-func (c *Client) GetConfiguration(transactionId string) (*models.Configuration, error) {
-	url := c.base_url + "/services/haproxy/configuration/raw?transaction_id" + transactionId
+func (c *Client) GetConfiguration() (*models.Configuration, error) {
+	url := c.base_url + "/services/haproxy/configuration/raw"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -16,6 +16,10 @@ func (c *Client) GetConfiguration(transactionId string) (*models.Configuration, 
 	res := models.Configuration{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
+	}
+
+	if res.Version == 0 {
+		res.Version = 1
 	}
 
 	return &res, nil
