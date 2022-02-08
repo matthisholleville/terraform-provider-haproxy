@@ -259,6 +259,10 @@ func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	_, err = client.CommitTransaction(transaction.Id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	d.SetId(frontend.Name)
 	return nil
 }
@@ -272,6 +276,10 @@ func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 	frontend := *buildFrontendFromResourceParameters(d)
 	_, err = client.UpdateFrontend(transaction.Id, frontend)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, err = client.CommitTransaction(transaction.Id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -290,88 +298,141 @@ func resourceFrontendDelete(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	_, err = client.CommitTransaction(transaction.Id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	d.SetId("")
 	return nil
 }
 
 func buildFrontendFromResourceParameters(d *schema.ResourceData) *models.Frontend {
-	bindProcess := d.Get("bind_process").(string)
-	clflog := d.Get("clflog").(bool)
-	clientTimeout := d.Get("client_timeout").(int)
-	clitcpka := d.Get("clitcpka").(string)
-	contstats := d.Get("contstats").(string)
-	defaultBackend := d.Get("default_backend").(string)
-	dontLogNull := d.Get("dontlognull").(string)
-	forwardForSet := d.Get("forwardFor").(map[string]interface{})
-	forwardFor := &models.Forwardfor{
-		Enabled: forwardForSet["enabled"].(string),
-		Except:  forwardForSet["except"].(string),
-		Header:  forwardForSet["header"].(string),
-		Ifnone:  forwardForSet["ifnone"].(bool),
+	frontend := &models.Frontend{}
+	if v, ok := d.GetOk("bind_process"); ok {
+		frontend.BindProcess = v.(string)
 	}
-	httpBufferRequest := d.Get("http_buffer_request").(string)
-	httpUseHtx := d.Get("http_use_htx").(string)
-	httpConnectionMode := d.Get("http_connection_mode").(string)
-	httpKeepAliveTimeout := d.Get("http_keep_alive_timeout").(int)
-	httpRequestTimeout := d.Get("http_request_timeout").(int)
-	httpLog := d.Get("httplog").(bool)
-	logFormat := d.Get("log_format").(string)
-	logFormatSd := d.Get("log_format_sd").(string)
-	logSeparateErrors := d.Get("log_separate_errors").(string)
-	logTag := d.Get("log_tag").(string)
-	logasap := d.Get("logasap").(string)
-	maxconn := d.Get("maxconn").(int)
-	mode := d.Get("mode").(string)
-	monitorFailSet := d.Get("monitor_fail").(map[string]interface{})
-	monitorFail := &models.MonitorFail{
-		Cond:     monitorFailSet["cond"].(string),
-		CondTest: monitorFailSet["cond_test"].(string),
-	}
-	monitorUri := d.Get("monitor_uri").(string)
-	name := d.Get("name").(string)
-	statsOptionsSet := d.Get("stats_options").(map[string]interface{})
-	statsOptions := &models.StatsOptions{
-		StatsEnable:       statsOptionsSet["stats_enable"].(bool),
-		StatsHideVersion:  statsOptionsSet["stats_hide_version"].(bool),
-		StatsMaxconn:      statsOptionsSet["stats_maxconn"].(int),
-		StatsRefreshDelay: statsOptionsSet["stats_refresh_delay"].(int),
-		StatsShowDesc:     statsOptionsSet["stats_show_desc"].(string),
-		StatsShowLegends:  statsOptionsSet["stats_show_legends"].(bool),
-		StatsShowNodeName: statsOptionsSet["stats_show_node_name"].(string),
-		StatsUrilPrefix:   statsOptionsSet["stats_uri_prefix"].(string),
-	}
-	tcplog := d.Get("tcplog").(bool)
-	uniqueIdFormat := d.Get("unique_id_format").(string)
-	uniqueIdHeader := d.Get("unique_id_header").(string)
 
-	return &models.Frontend{
-		BindProcess:          bindProcess,
-		Clflog:               clflog,
-		ClientTimeout:        clientTimeout,
-		Clitcpka:             clitcpka,
-		Contstats:            contstats,
-		DefaultBackend:       defaultBackend,
-		Dontlognull:          dontLogNull,
-		Forwardfor:           *forwardFor,
-		HttpBufferRequest:    httpBufferRequest,
-		HttpUseHtx:           httpUseHtx,
-		HttpConnectionMode:   httpConnectionMode,
-		HttpKeepAliveTimeout: httpKeepAliveTimeout,
-		HttpRequestTimeout:   httpRequestTimeout,
-		HttpLog:              httpLog,
-		LogFormat:            logFormat,
-		LogFormatSd:          logFormatSd,
-		LogSeparateErrors:    logSeparateErrors,
-		LogTag:               logTag,
-		Logasap:              logasap,
-		MaxConn:              maxconn,
-		Mode:                 mode,
-		MonitorFail:          *monitorFail,
-		MonitorUri:           monitorUri,
-		Name:                 name,
-		StatsOptions:         *statsOptions,
-		TcpLog:               tcplog,
-		UniqueIdFormat:       uniqueIdFormat,
-		UniqueIdHeader:       uniqueIdHeader,
+	if v, ok := d.GetOk("clflog"); ok {
+		frontend.Clflog = v.(bool)
 	}
+
+	if v, ok := d.GetOk("client_timeout"); ok {
+		frontend.ClientTimeout = v.(int)
+	}
+
+	if v, ok := d.GetOk("clitcpka"); ok {
+		frontend.Clitcpka = v.(string)
+	}
+
+	if v, ok := d.GetOk("contstats"); ok {
+		frontend.Contstats = v.(string)
+	}
+
+	if v, ok := d.GetOk("default_backend"); ok {
+		frontend.DefaultBackend = v.(string)
+	}
+
+	if v, ok := d.GetOk("dontlognull"); ok {
+		frontend.Dontlognull = v.(string)
+	}
+
+	if v, ok := d.GetOk("forwardFor"); ok {
+		forwardFor := models.Forwardfor{}
+		forwardFor.Enabled = v.(map[string]interface{})["enabled"].(string)
+		forwardFor.Except = v.(map[string]interface{})["except"].(string)
+		forwardFor.Header = v.(map[string]interface{})["header"].(string)
+		forwardFor.Ifnone = v.(map[string]interface{})["ifnone"].(bool)
+	}
+
+	if v, ok := d.GetOk("http_buffer_request"); ok {
+		frontend.HttpBufferRequest = v.(string)
+	}
+
+	if v, ok := d.GetOk("http_use_htx"); ok {
+		frontend.HttpUseHtx = v.(string)
+	}
+
+	if v, ok := d.GetOk("http_connection_mode"); ok {
+		frontend.HttpConnectionMode = v.(string)
+	}
+
+	if v, ok := d.GetOk("http_keep_alive_timeout"); ok {
+		frontend.HttpKeepAliveTimeout = v.(int)
+	}
+
+	if v, ok := d.GetOk("http_request_timeout"); ok {
+		frontend.HttpRequestTimeout = v.(int)
+	}
+
+	if v, ok := d.GetOk("httplog"); ok {
+		frontend.HttpLog = v.(bool)
+	}
+
+	if v, ok := d.GetOk("log_format"); ok {
+		frontend.LogFormat = v.(string)
+	}
+
+	if v, ok := d.GetOk("log_format_sd"); ok {
+		frontend.LogFormatSd = v.(string)
+	}
+
+	if v, ok := d.GetOk("log_separate_errors"); ok {
+		frontend.LogSeparateErrors = v.(string)
+	}
+
+	if v, ok := d.GetOk("log_tag"); ok {
+		frontend.LogTag = v.(string)
+	}
+
+	if v, ok := d.GetOk("logasap"); ok {
+		frontend.Logasap = v.(string)
+	}
+
+	if v, ok := d.GetOk("maxconn"); ok {
+		frontend.MaxConn = v.(int)
+	}
+
+	if v, ok := d.GetOk("mode"); ok {
+		frontend.Mode = v.(string)
+	}
+
+	if v, ok := d.GetOk("monitor_fail"); ok {
+		monitorFail := models.MonitorFail{}
+		monitorFail.Cond = v.(map[string]interface{})["cond"].(string)
+		monitorFail.CondTest = v.(map[string]interface{})["cond_test"].(string)
+	}
+
+	if v, ok := d.GetOk("monitor_uri"); ok {
+		frontend.MonitorUri = v.(string)
+	}
+
+	if v, ok := d.GetOk("name"); ok {
+		frontend.Name = v.(string)
+	}
+
+	if v, ok := d.GetOk("stats_options"); ok {
+		statsOptions := models.StatsOptions{}
+		statsOptions.StatsEnable = v.(map[string]interface{})["stats_enable"].(bool)
+		statsOptions.StatsHideVersion = v.(map[string]interface{})["stats_hide_version"].(bool)
+		statsOptions.StatsMaxconn = v.(map[string]interface{})["stats_maxconn"].(int)
+		statsOptions.StatsRefreshDelay = v.(map[string]interface{})["stats_refresh_delay"].(int)
+		statsOptions.StatsShowDesc = v.(map[string]interface{})["stats_show_desc"].(string)
+		statsOptions.StatsShowLegends = v.(map[string]interface{})["stats_show_legends"].(bool)
+		statsOptions.StatsShowNodeName = v.(map[string]interface{})["stats_show_node_name"].(string)
+		statsOptions.StatsUrilPrefix = v.(map[string]interface{})["stats_uri_prefix"].(string)
+	}
+
+	if v, ok := d.GetOk("tcplog"); ok {
+		frontend.TcpLog = v.(bool)
+	}
+
+	if v, ok := d.GetOk("unique_id_format"); ok {
+		frontend.UniqueIdFormat = v.(string)
+	}
+
+	if v, ok := d.GetOk("unique_id_header"); ok {
+		frontend.UniqueIdHeader = v.(string)
+	}
+
+	return frontend
 }

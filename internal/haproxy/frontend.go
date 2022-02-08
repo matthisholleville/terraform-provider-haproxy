@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Client) GetFrontend(transactionId string, frontend models.Frontend) (*models.Frontend, error) {
-	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "&transaction_id=" + transactionId
+	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "?transaction_id=" + transactionId
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (c *Client) GetFrontend(transactionId string, frontend models.Frontend) (*m
 }
 
 func (c *Client) CreateFrontend(transactionId string, frontend models.Frontend) (*models.Frontend, error) {
-	url := c.base_url + "/services/haproxy/configuration/frontends&transaction_id=" + transactionId
+	url := c.base_url + "/services/haproxy/configuration/frontends?transaction_id=" + transactionId
 	bodyStr, _ := json.Marshal(frontend)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bodyStr))
 	if err != nil {
@@ -42,7 +42,7 @@ func (c *Client) CreateFrontend(transactionId string, frontend models.Frontend) 
 }
 
 func (c *Client) UpdateFrontend(transactionId string, frontend models.Frontend) (*models.Frontend, error) {
-	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "&transaction_id=" + transactionId
+	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "?transaction_id=" + transactionId
 	bodyStr, _ := json.Marshal(frontend)
 	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(bodyStr))
 	if err != nil {
@@ -60,7 +60,7 @@ func (c *Client) UpdateFrontend(transactionId string, frontend models.Frontend) 
 }
 
 func (c *Client) DeleteFrontend(transactionId string, frontend models.Frontend) error {
-	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "&transaction_id=" + transactionId
+	url := c.base_url + "/services/haproxy/configuration/frontends/" + frontend.Name + "?transaction_id=" + transactionId
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
