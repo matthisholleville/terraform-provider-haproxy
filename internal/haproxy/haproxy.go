@@ -46,8 +46,6 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 
 	defer res.Body.Close()
 
-	fmt.Println(res.StatusCode)
-
 	// Try to unmarshall into errorResponse
 	if res.StatusCode >= 300 {
 		var errRes errorResponse
