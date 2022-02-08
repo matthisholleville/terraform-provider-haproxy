@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 
+	"github.com/avast/retry-go"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/matthisholleville/terraform-provider-haproxy/internal/haproxy"
@@ -289,21 +290,31 @@ func resourceFrontendRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	configuration, err := client.GetConfiguration()
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	transaction, err := client.CreateTransaction(configuration.Version)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
 	frontend := *buildFrontendFromResourceParameters(d)
-	_, err = client.CreateFrontend(transaction.Id, frontend)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	_, err = client.CommitTransaction(transaction.Id)
+
+	err := retry.Do(
+		func() error {
+			configuration, err := client.GetConfiguration()
+			if err != nil {
+				return err
+			}
+			transaction, err := client.CreateTransaction(configuration.Version)
+			if err != nil {
+				return err
+			}
+
+			_, err = client.CreateFrontend(transaction.Id, frontend)
+			if err != nil {
+				return err
+			}
+			_, err = client.CommitTransaction(transaction.Id)
+			if err != nil {
+				return err
+			}
+			return nil
+		},
+	)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -313,21 +324,29 @@ func resourceFrontendCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	configuration, err := client.GetConfiguration()
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	transaction, err := client.CreateTransaction(configuration.Version)
-	if err != nil {
-		return diag.FromErr(err)
-	}
 
 	frontend := *buildFrontendFromResourceParameters(d)
-	_, err = client.UpdateFrontend(transaction.Id, frontend)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	_, err = client.CommitTransaction(transaction.Id)
+	err := retry.Do(
+		func() error {
+			configuration, err := client.GetConfiguration()
+			if err != nil {
+				return err
+			}
+			transaction, err := client.CreateTransaction(configuration.Version)
+			if err != nil {
+				return err
+			}
+			_, err = client.UpdateFrontend(transaction.Id, frontend)
+			if err != nil {
+				return err
+			}
+			_, err = client.CommitTransaction(transaction.Id)
+			if err != nil {
+				return err
+			}
+			return nil
+		},
+	)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -336,24 +355,36 @@ func resourceFrontendUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 func resourceFrontendDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*haproxy.Client)
-	configuration, err := client.GetConfiguration()
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	transaction, err := client.CreateTransaction(configuration.Version)
+
+	frontend := *buildFrontendFromResourceParameters(d)
+
+	err := retry.Do(
+		func() error {
+			configuration, err := client.GetConfiguration()
+			if err != nil {
+				return err
+			}
+			transaction, err := client.CreateTransaction(configuration.Version)
+			if err != nil {
+				return err
+			}
+
+			err = client.DeleteFrontend(transaction.Id, frontend)
+			if err != nil {
+				return err
+			}
+			_, err = client.CommitTransaction(transaction.Id)
+			if err != nil {
+				return err
+			}
+			return nil
+		},
+	)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	frontend := *buildFrontendFromResourceParameters(d)
-	err = client.DeleteFrontend(transaction.Id, frontend)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	_, err = client.CommitTransaction(transaction.Id)
-	if err != nil {
-		return diag.FromErr(err)
-	}
 	d.SetId("")
 	return nil
 }
