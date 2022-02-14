@@ -12,6 +12,7 @@ import (
 
 func resourceFrontend() *schema.Resource {
 	return &schema.Resource{
+		Description:   "`haproxy_frontend` manage frontend.",
 		CreateContext: resourceFrontendCreate,
 		ReadContext:   resourceFrontendRead,
 		UpdateContext: resourceFrontendUpdate,

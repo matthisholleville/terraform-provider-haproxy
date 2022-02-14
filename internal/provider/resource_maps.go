@@ -15,6 +15,7 @@ import (
 
 func resourceMaps() *schema.Resource {
 	return &schema.Resource{
+		Description:   "`haproxy_maps` manage maps.",
 		CreateContext: resourceMapsCreate,
 		ReadContext:   resourceMapsRead,
 		UpdateContext: resourceMapsUpdate,
