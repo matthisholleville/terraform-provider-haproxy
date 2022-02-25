@@ -2,8 +2,8 @@ package haproxy
 
 import (
 	"encoding/base64"
+	"net/url"
 	"regexp"
-	"strings"
 )
 
 func basicAuth(username, password string) string {
@@ -11,8 +11,8 @@ func basicAuth(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-func replaceSlashInString(value string) string {
-	return strings.Replace(value, "/", "%2F", -1)
+func encodeUrl(s string) string {
+	return url.QueryEscape(s)
 }
 
 func ExtractStringWithRegex(value string, regex string) string {

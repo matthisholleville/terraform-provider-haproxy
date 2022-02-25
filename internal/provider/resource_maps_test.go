@@ -16,7 +16,7 @@ func TestResourceMaps(t *testing.T) {
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccMapEntrie("test", "/metrics", "50", "test"),
+				Config: testAccMapEntrie("test", "https://preprod-tmp-gestion-sans-compta.agicap.cloud|identity-gestion-sans-compta", "enable", "test"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("haproxy_maps.test", "map", "test"),
 				),

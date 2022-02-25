@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Client) GetMapEntrie(entrieName string, mapName string) (*models.MapEntrie, error) {
-	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + replaceSlashInString(entrieName) + "?map=" + mapName
+	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + encodeUrl(entrieName) + "?map=" + mapName
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (c *Client) CreateMapEntrie(entrie *models.MapEntrie, mapName string, force
 }
 
 func (c *Client) UpdateMapEntrie(entrie *models.MapEntrie, mapName string, forceSync bool) (*models.MapEntrie, error) {
-	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + replaceSlashInString(entrie.Key) + "?map=" + mapName + "&force_sync=" + strconv.FormatBool(forceSync)
+	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + encodeUrl(entrie.Key) + "?map=" + mapName + "&force_sync=" + strconv.FormatBool(forceSync)
 	entrieValue := &models.MapEntrie{
 		Value: entrie.Value,
 	}
@@ -64,7 +64,7 @@ func (c *Client) UpdateMapEntrie(entrie *models.MapEntrie, mapName string, force
 }
 
 func (c *Client) DeleteMapEntrie(entrieName string, mapName string, forceSync bool) error {
-	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + replaceSlashInString(entrieName) + "?map=" + mapName + "&force_sync=" + strconv.FormatBool(forceSync)
+	url := c.base_url + "/services/haproxy/runtime/maps_entries/" + encodeUrl(entrieName) + "?map=" + mapName + "&force_sync=" + strconv.FormatBool(forceSync)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
