@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Client) GetAcl(transactionId string, acl *models.ACL, parentName string, parentType string) (*models.ACL, error) {
-	url := c.base_url + "/services/haproxy/configuration/acls/" + strconv.Itoa(acl.Index) + "?parent_name=" + parentName + "&transaction_id=" + transactionId + "&parent_type" + parentType
+	url := c.base_url + "/services/haproxy/configuration/acls/" + strconv.Itoa(acl.Index) + "?parent_name=" + parentName + "&transaction_id=" + transactionId + "&parent_type=" + parentType
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -24,8 +24,23 @@ func (c *Client) GetAcl(transactionId string, acl *models.ACL, parentName string
 	return &res.Data, nil
 }
 
+func (c *Client) GetAcls(transactionId string, parentName string, parentType string) (*[]models.ACL, error) {
+	url := c.base_url + "/services/haproxy/configuration/acls?parent_name=" + parentName + "&transaction_id=" + transactionId + "&parent_type=" + parentType
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res := models.GetAcls{}
+	if err := c.sendRequest(req, &res); err != nil {
+		return nil, err
+	}
+
+	return &res.Data, nil
+}
+
 func (c *Client) CreateAcl(transactionId string, acl *models.ACL, parentName string, parentType string) (*models.ACL, error) {
-	url := c.base_url + "/services/haproxy/configuration/acls?parent_name=" + parentName + "&transaction_id=" + transactionId + "&parent_type" + parentType
+	url := c.base_url + "/services/haproxy/configuration/acls?parent_name=" + parentName + "&transaction_id=" + transactionId + "&parent_type=" + parentType
 	bodyStr, _ := json.Marshal(acl)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(bodyStr))
 	if err != nil {

@@ -5,6 +5,11 @@ type GetAcl struct {
 	Data    ACL `json:"data"`
 }
 
+type GetAcls struct {
+	Version int   `json:"_version"`
+	Data    []ACL `json:"data"`
+}
+
 type ACL struct {
 	ACLName   string `json:"acl_name"`
 	Criterion string `json:"criterion"`

@@ -39,6 +39,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"haproxy_maps":     resourceMaps(),
 			"haproxy_frontend": resourceFrontend(),
+			"haproxy_acl":      resourceAcl(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
