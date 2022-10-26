@@ -15,6 +15,8 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
+var ErrNotFound = errors.New("NotFound")
+
 func NewClient(username string, password string, server_url string, insecure bool) *Client {
 	scheme := "https"
 	if insecure {
@@ -45,6 +47,11 @@ func (c *Client) sendRequest(req *http.Request, v interface{}) error {
 	}
 
 	defer res.Body.Close()
+
+	if res.StatusCode == http.StatusNotFound {
+		// Latest version of haproxy API return 404 now instead of 204 before.
+		return ErrNotFound
+	}
 
 	// Try to unmarshall into errorResponse
 	if res.StatusCode >= 300 {

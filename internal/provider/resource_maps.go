@@ -112,9 +112,16 @@ func resourceMapsRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	client := meta.(*haproxy.Client)
 
 	mapEntrie, err := client.GetMapEntrie(d.Id(), d.Get("map").(string))
-	if err != nil {
-		diag.FromErr(err)
+
+	if errors.Is(err, haproxy.ErrNotFound) {
+		d.SetId("")
+		return nil
 	}
+
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	d.Set("key", mapEntrie.Key)
 	d.Set("value", mapEntrie.Value)
 	d.Set("map", d.Get("map").(string))
@@ -129,7 +136,7 @@ func resourceMapsUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		mapName := d.Get("map").(string)
 		entrie, err := client.GetMapEntrie(d.Get("key").(string), mapName)
 		if err != nil {
-			diag.FromErr(err)
+			return diag.FromErr(err)
 		}
 
 		entrie.Value = d.Get("value").(string)
